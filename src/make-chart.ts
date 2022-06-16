@@ -3,10 +3,17 @@ import { ChartConfiguration } from 'chart.js'
 import { ChartJSNodeCanvas } from 'chartjs-node-canvas'
 import { program } from 'commander'
 import { readFileSync, writeFile } from 'fs'
-import { ScatterWithErrorBarsController } from 'chartjs-chart-error-bars'
+import { ScatterWithErrorBarsController, IErrorBarXYDataPoint } from 'chartjs-chart-error-bars'
 import csvjson from 'csvjson'
 
-interface DataRow { y: string, x: string, yMin: string, yMax: string }
+interface DataRow {
+  y: string,
+  yMin: string,
+  yMax: string,
+  x: string,
+  xMin: string,
+  xMax: string
+}
 
 program
   .option('-o, --infile <string>', 'Data file.')
@@ -31,10 +38,17 @@ if (!options.labels) throw new Error('Must specificy --labels.')
 
 const rawData = readFileSync(options.infile as string, { encoding: 'utf8' })
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-const data = csvjson.toObject(rawData, { delimiter: ',' }) as DataRow[]
-data.forEach(row => Object.keys(row).forEach(key => {
-  row[key] = parseFloat(row[key] as string)
+const dataRows = csvjson.toObject(rawData, { delimiter: ',' }) as DataRow[]
+const data: IErrorBarXYDataPoint[] = []
+dataRows.map(row => data.push({
+  x: parseFloat(row.x as unknown as string),
+  xMin: parseFloat(row.xMin as unknown as string),
+  xMax: parseFloat(row.xMax as unknown as string),
+  y: parseFloat(row.y as unknown as string),
+  yMin: parseFloat(row.yMin as unknown as string),
+  yMax: parseFloat(row.yMax as unknown as string),
 }))
+console.log(data)
 const labels: string[] = JSON.parse(options.labels as string) as string[]
 const width = 600
 const height = 335
@@ -131,7 +145,7 @@ async function makeChart() {
             }
           },
           ticks: {
-            callback(value, index) {
+            callback(value) {
               return `${parseInt(value as string, 10) * 100} %`
             },
             autoSkip: false

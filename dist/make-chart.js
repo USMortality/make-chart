@@ -31,10 +31,17 @@ if (!options.labels)
     throw new Error('Must specificy --labels.');
 const rawData = readFileSync(options.infile, { encoding: 'utf8' });
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-const data = csvjson.toObject(rawData, { delimiter: ',' });
-data.forEach(row => Object.keys(row).forEach(key => {
-    row[key] = parseFloat(row[key]);
+const dataRows = csvjson.toObject(rawData, { delimiter: ',' });
+const data = [];
+dataRows.map(row => data.push({
+    x: parseFloat(row.x),
+    xMin: parseFloat(row.xMin),
+    xMax: parseFloat(row.xMax),
+    y: parseFloat(row.y),
+    yMin: parseFloat(row.yMin),
+    yMax: parseFloat(row.yMax),
 }));
+console.log(data);
 const labels = JSON.parse(options.labels);
 const width = 600;
 const height = 335;
@@ -130,7 +137,7 @@ async function makeChart() {
                         }
                     },
                     ticks: {
-                        callback(value, index) {
+                        callback(value) {
                             return `${parseInt(value, 10) * 100} %`;
                         },
                         autoSkip: false
