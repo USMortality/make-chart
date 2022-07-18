@@ -26,6 +26,8 @@ async function makeChart(
   const config = getChartConfig(options, labels)
   config.data.datasets = datasets
   if (config.options?.scales?.x && config.options.scales.x.ticks) {
+    config.options.scales.x.min = 0
+    config.options.scales.x.max = 1
     config.options.scales.x.ticks = {
       callback(value: number) {
         return `${Math.round(value * 100)}%`
