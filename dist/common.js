@@ -1,4 +1,3 @@
-import { ScatterWithErrorBarsController } from 'chartjs-chart-error-bars';
 import { writeFile } from 'fs';
 export async function saveImage(image, filename) {
     return new Promise(res => {
@@ -9,11 +8,11 @@ export async function saveImage(image, filename) {
         });
     });
 }
-export function getChartConfig(labels, datasets, options) {
+export function getChartConfig(options, labels) {
     return {
-        type: ScatterWithErrorBarsController.id,
+        type: 'line',
         data: {
-            datasets,
+            datasets: [],
             labels
         },
         options: {
@@ -43,29 +42,9 @@ export function getChartConfig(labels, datasets, options) {
                         size: 10
                     },
                     padding: { bottom: 20 }
-                },
+                }
             },
             scales: {
-                y: {
-                    title: {
-                        display: true,
-                        color: '#bbbbbb',
-                        text: options.ytitle,
-                        font: {
-                            size: 10
-                        }
-                    },
-                    ticks: {
-                        callback(_, index) {
-                            if (index % 2 === 0)
-                                return;
-                            return labels[index / 2 - 0.5];
-                        },
-                        autoSkip: false
-                    },
-                    min: 0.5,
-                    max: labels.length + .5,
-                },
                 x: {
                     type: 'linear',
                     position: 'left',
@@ -77,12 +56,7 @@ export function getChartConfig(labels, datasets, options) {
                             size: 10
                         }
                     },
-                    ticks: {
-                        callback(value) {
-                            return `${parseInt(value, 10) * 100} %`;
-                        },
-                        autoSkip: false
-                    },
+                    ticks: {},
                     grid: {
                         drawBorder: false,
                         color: context => {
@@ -93,9 +67,19 @@ export function getChartConfig(labels, datasets, options) {
                         }
                     },
                 },
+                y: {
+                    title: {
+                        display: true,
+                        color: '#bbbbbb',
+                        text: options.ytitle,
+                        font: {
+                            size: 10
+                        }
+                    },
+                    ticks: {},
+                },
             }
-        },
-        plugins: [],
+        }
     };
 }
 //# sourceMappingURL=common.js.map

@@ -1,11 +1,5 @@
 import { CliOptions } from './make-chart'
-import {
-  ChartConfiguration,
-  ChartDataset,
-  ChartType,
-  DefaultDataPoint
-} from 'chart.js'
-import { ScatterWithErrorBarsController } from 'chartjs-chart-error-bars'
+import { ChartConfiguration } from 'chart.js'
 import { writeFile } from 'fs'
 
 export async function saveImage(image: Buffer, filename: string):
@@ -19,14 +13,13 @@ export async function saveImage(image: Buffer, filename: string):
 }
 
 export function getChartConfig(
-  labels: string[],
-  datasets: ChartDataset<ChartType, DefaultDataPoint<ChartType>>[],
-  options: CliOptions
+  options: CliOptions,
+  labels: string[]
 ): ChartConfiguration {
   return {
-    type: ScatterWithErrorBarsController.id,
+    type: 'line',
     data: {
-      datasets,
+      datasets: [],
       labels
     },
     options: {
@@ -56,28 +49,9 @@ export function getChartConfig(
             size: 10
           },
           padding: { bottom: 20 }
-        },
+        }
       },
       scales: {
-        y: {
-          title: {
-            display: true,
-            color: '#bbbbbb',
-            text: options.ytitle,
-            font: {
-              size: 10
-            }
-          },
-          ticks: {
-            callback(_, index) {
-              if (index % 2 === 0) return
-              return labels[index / 2 - 0.5]
-            },
-            autoSkip: false
-          },
-          min: 0.5,
-          max: labels.length + .5,
-        },
         x: {
           type: 'linear',
           position: 'left',
@@ -89,12 +63,7 @@ export function getChartConfig(
               size: 10
             }
           },
-          ticks: {
-            callback(value) {
-              return `${parseInt(value as string, 10) * 100} %`
-            },
-            autoSkip: false
-          },
+          ticks: {},
           grid: {
             drawBorder: false,
             color: context => {
@@ -103,8 +72,18 @@ export function getChartConfig(
             }
           },
         },
+        y: {
+          title: {
+            display: true,
+            color: '#bbbbbb',
+            text: options.ytitle,
+            font: {
+              size: 10
+            }
+          },
+          ticks: {},
+        },
       }
-    },
-    plugins: [],
+    }
   }
 }
