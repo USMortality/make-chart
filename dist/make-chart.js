@@ -43,6 +43,7 @@ switch (options.type) {
             throw new Error('Must specify --xColumnKey.');
         if (!options.ycolumnkey)
             throw new Error('Must specify --yColumnKey.');
+        console.log(dataRows);
         await makeScatterChart(options, dataRows);
         break;
     case 'scattererror':
