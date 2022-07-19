@@ -18,6 +18,10 @@ async function makeChart(data, labels, options) {
         }];
     const config = getChartConfig(options, labels);
     config.data.datasets = datasets;
+    // if (config.options?.scales?.y && config.options.scales.y.ticks) {
+    //   config.options.scales.y.min = 0
+    //   config.options.scales.y.max = 5000
+    // }
     if (config.options?.scales?.x && config.options.scales.x.ticks) {
         config.options.scales.x.min = 0;
         config.options.scales.x.max = 1;
