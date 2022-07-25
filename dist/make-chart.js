@@ -15,7 +15,13 @@ program
     .option('-t, --type <string>', 'Type of chart [scatter, scattererror].')
     .option('-xk, --xcolumnkey <string>', 'Key of x column data.')
     .option('-yk, --ycolumnkey <string>', 'Key of x column data.')
-    .option('-lk, --labelcolumnkey <string>', 'Key of label column data.');
+    .option('-lk, --labelcolumnkey <string>', 'Key of label column data.')
+    .option('-yat, --yaxistype <string>', 'Y-axis type [linear, logarithmic, ...]')
+    .option('-yami, --yaxismin <number>', 'Minimum of the axis, e.g. 0')
+    .option('-yama, --yaxismax <number>', 'Maximum of the axis, e.g. 100')
+    .option('-xat, --xaxistype <string>', 'X-axis type [linear, logarithmic, ...]')
+    .option('-xami, --xaxismin <number>', 'Minimum of the axis, e.g. 0')
+    .option('-xama, --xaxismax <number>', 'Maximum of the axis, e.g. 100');
 program.parse();
 const options = program.opts();
 if (!options.infile)
@@ -36,6 +42,7 @@ const rawData = readFileSync(options.infile, { encoding: 'utf8' });
 const delimiter = options.infile.endsWith('.tsv') ? '\t' : ',';
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 const dataRows = csvjson.toObject(rawData, { delimiter });
+console.log(options);
 switch (options.type) {
     case 'scatter':
         console.log('Making Scatter plot.');
@@ -43,7 +50,6 @@ switch (options.type) {
             throw new Error('Must specify --xColumnKey.');
         if (!options.ycolumnkey)
             throw new Error('Must specify --yColumnKey.');
-        console.log(dataRows);
         await makeScatterChart(options, dataRows);
         break;
     case 'scattererror':

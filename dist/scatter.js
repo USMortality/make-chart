@@ -18,13 +18,29 @@ async function makeChart(data, labels, options) {
         }];
     const config = getChartConfig(options, labels);
     config.data.datasets = datasets;
-    // if (config.options?.scales?.y && config.options.scales.y.ticks) {
-    //   config.options.scales.y.min = 0
-    //   config.options.scales.y.max = 5000
-    // }
+    if (config.options?.scales?.y && config.options.scales.y.ticks) {
+        config.options.scales.y.type = options.yaxistype ? options.yaxistype : 'linear';
+        config.options.scales.y.min = parseInt(options.yaxismin, 10);
+        config.options.scales.y.max = parseInt(options.yaxismax, 10);
+        config.options.scales.y.ticks = {
+            autoSkip: false
+        };
+        if (options.yaxistype === 'logarithmic') {
+            config.options.scales.y.afterBuildTicks = chart => {
+                chart.ticks = [
+                    { value: 0, label: '0' },
+                    { value: 10, label: '10' },
+                    { value: 100, label: '100' },
+                    { value: 1000, label: '1,000' },
+                    { value: 10000, label: '10,000' }
+                ];
+            };
+        }
+    }
     if (config.options?.scales?.x && config.options.scales.x.ticks) {
-        config.options.scales.x.min = 0;
-        config.options.scales.x.max = 1;
+        config.options.scales.x.type = options.xaxistype ? options.xaxistype : 'linear';
+        config.options.scales.x.min = options.xaxismin;
+        config.options.scales.x.max = options.xaxismax;
         config.options.scales.x.ticks = {
             callback(value) {
                 return `${Math.round(value * 100)}%`;
